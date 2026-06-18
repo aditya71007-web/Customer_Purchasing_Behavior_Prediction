@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Purchasing Behavior Predictor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Customer Purchasing Behavior Prediction</h1>
+
+        <div class="input-box">
+            <label>Age</label>
+            <input type="number" id="age" placeholder="Enter age">
+        </div>
+
+        <div class="input-box">
+            <label>Annual Income</label>
+            <input type="number" id="income" placeholder="Enter annual income">
+        </div>
+
+        <div class="input-box">
+            <label>Previous Purchases</label>
+            <input type="number" id="purchases" placeholder="Enter previous purchases">
+        </div>
+
+        <button onclick="predictBehavior()">Predict</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function predictBehavior() {
+            const age = document.getElementById("age").value;
+            const income = document.getElementById("income").value;
+            const purchases = document.getElementById("purchases").value;
+
+            if (!age || !income || !purchases) {
+                alert("Please fill all fields");
+                return;
+            }
+
+            const response = await fetch("http://127.0.0.1:8000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    age: parseInt(age),
+                    annual_income: parseFloat(income),
+                    previous_purchases: parseInt(purchases)
+                })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("result").innerHTML = `
+                <h3>Prediction Result</h3>
+                <p><strong>Behavior:</strong> ${data.purchasing_behavior}</p>
+                <p><strong>Class ID:</strong> ${data.class_id}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
